@@ -15,9 +15,9 @@
             </div>
             <div class="product-info">
                 <h1>{{products}}</h1>
-            <p>
-                {{description}}
-            </p>
+                <p v-if="inStock">In Stock</p>
+                <p v-else>Out of Stock</p>
+                <span v-if="onSale">On Sale</span>
             </div>
         </div>
     </div>
@@ -28,7 +28,9 @@
             data: {
                 products: 'Boots',
                 description: 'A pair of warm, fuzzy socks',
-                image: 'img/socks-green.jpg'
+                image: 'img/socks-green.jpg',
+                inStock: true,
+                onSale: true
             }
         })
     </script>
