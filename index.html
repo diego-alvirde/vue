@@ -14,21 +14,21 @@
                 <img :src="image">
             </div>
             <div class="product-info">
-                <h1>{{products}}</h1>
+                <h1>{{title}}</h1>
                 <p v-if="inStock">In Stock</p>
                 <p v-else :class="{ outOfStock : !inStock }">Out of Stock</p>
-                <span v-if="onSale">On Sale</span>
+                <p>{{sale}}</p>
                 <ul>
                     <li v-for="detail in details">{{detail}}</li>
                 </ul>
                 <ul>
                     <li v-for="size in sizes">{{size}}</li>
                 </ul>
-                <div v-for="variant in variants" 
+                <div v-for="(variant, index) in variants" 
                     :key="variant.variantId"
                     class="color-box"
                     :style="{ backgroundColor : variant.variantColor }"
-                    v-on:mouseover="updateProduct(variant.variantImage)">
+                    v-on:mouseover="updateProduct(index)">
                     
                 </div>
                 <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton : !inStock}">Add Cart</button>
@@ -44,22 +44,24 @@
         var app = new Vue({
             el: '#app',
             data: {
+                brand: 'Vue Mastery',
                 products: 'Boots',
                 description: 'A pair of warm, fuzzy socks',
-                image: 'img/socks-green.jpg',
-                inStock: true,
+                selectedVariant: 0,
                 onSale: true,
                 details: ["80% cotton", "20% polyester", "Gender-neutral"],
                 variants: [
                     {
                         variantId: 2234,
                         variantColor: 'green',
-                        variantImage: 'img/socks-green.jpg'    
+                        variantImage: 'img/socks-green.jpg',
+                        variantQuantity: 10    
                     },
                     {
                         variantId: 2235,
                         variantColor: 'blue',
-                        variantImage: 'img/socks-blue.jpg'
+                        variantImage: 'img/socks-blue.jpg',
+                        variantQuantity: 0
                     }
                 ],
                 sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
@@ -73,8 +75,26 @@
                     if(this.cart > 0)
                     this.cart -= 1
                 },
-                updateProduct(variantImage) {
-                    this.image = variantImage
+                updateProduct(index) {
+                    this.selectedVariant = index
+                    console.log(index)
+                }
+            },
+            computed: {
+                title() {
+                    return this.brand + ' ' + this.products
+                },
+                image(index) {
+                    return this.variants[this.selectedVariant].variantImage
+                },
+                inStock() {
+                    return this.variants[this.selectedVariant].variantQuantity
+                },
+                sale() {
+                    if(this.onSale)
+                    return this.brand + ' ' + this.products + ' are on sale'
+
+                    return this.brand + ' ' + this.products + ' are not on sale'
                 }
             }
         })
