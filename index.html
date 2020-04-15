@@ -9,7 +9,10 @@
 <body>
     <div class="nav-bar"></div>
     <div id="app">
-        <product :premium="premium"></product>
+        <div class="cart">
+            <p>Cart({{cart.length}})</p>
+        </div>
+        <product :premium="premium" @add-to-cart="updatedCart" @remove-to-cart="removeCart"></product>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script>
@@ -58,9 +61,7 @@
                 </div>
                 <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton : !inStock}">Add Cart</button>
                 <button v-on:click="removeToCart">Remove Cart</button>
-                <div class="cart">
-                    <p>Cart({{cart}})</p>
-                </div>
+                
             </div>
         </div>
             `,
@@ -83,20 +84,18 @@
                         variantId: 2235,
                         variantColor: 'blue',
                         variantImage: 'img/socks-blue.jpg',
-                        variantQuantity: 0
+                        variantQuantity: 5
                     }
                 ],
-                sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-                cart: 0
+                sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL']
                 }
             },
             methods: {
                 addToCart() {
-                    this.cart += 1
+                    this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId)
                 },
                 removeToCart() {
-                    if(this.cart > 0)
-                    this.cart -= 1
+                    this.$emit('remove-to-cart', this.variants[this.selectedVariant].variantId)
                 },
                 updateProduct(index) {
                     this.selectedVariant = index
@@ -130,7 +129,17 @@
         var app = new Vue({
             el: '#app',
             data: {
-                premium: true
+                premium: true,
+                cart: []
+            },
+            methods: {
+                updatedCart(id) {
+                    this.cart.push(id)
+                },
+                removeCart(id) {
+                    if(this.cart.length > 0)
+                        this.cart.splice(this.cart.indexOf(id),1)
+                }
             }
         })
     </script>
