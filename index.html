@@ -9,7 +9,33 @@
 <body>
     <div class="nav-bar"></div>
     <div id="app">
-        <div class="product">
+        <product :premium="premium"></product>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        Vue.component('product-details', {
+            props: {
+                details: {
+                    type: Array,
+                    required: true
+                }
+            },
+            template: `
+                <ul>
+                    <li v-for="detail in details">{{detail}}</li>
+                </ul>
+            `
+        })
+
+        Vue.component('product', {
+            props: {
+                premium: {
+                    type: Boolean,
+                    required: true
+                }
+            },
+            template: `
+            <div class="product">
             <div class="product-image">
                 <img :src="image">
             </div>
@@ -18,9 +44,8 @@
                 <p v-if="inStock">In Stock</p>
                 <p v-else :class="{ outOfStock : !inStock }">Out of Stock</p>
                 <p>{{sale}}</p>
-                <ul>
-                    <li v-for="detail in details">{{detail}}</li>
-                </ul>
+                <p>Shipping: {{shipping}}</p>
+                <product-details :details="details"></product-details>
                 <ul>
                     <li v-for="size in sizes">{{size}}</li>
                 </ul>
@@ -38,12 +63,9 @@
                 </div>
             </div>
         </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script>
-        var app = new Vue({
-            el: '#app',
-            data: {
+            `,
+            data(){
+                return {
                 brand: 'Vue Mastery',
                 products: 'Boots',
                 description: 'A pair of warm, fuzzy socks',
@@ -66,6 +88,7 @@
                 ],
                 sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
                 cart: 0
+                }
             },
             methods: {
                 addToCart() {
@@ -95,7 +118,19 @@
                     return this.brand + ' ' + this.products + ' are on sale'
 
                     return this.brand + ' ' + this.products + ' are not on sale'
+                },
+                shipping() {
+                    if(this.premium)
+                        return "Free"
+                    return 2.99
                 }
+            }
+        })
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                premium: true
             }
         })
     </script>
